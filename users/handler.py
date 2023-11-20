@@ -1,4 +1,4 @@
-from flask import Flask, render_template, Blueprint, request, redirect, url_for
+from flask import Flask, render_template, Blueprint, request, redirect, url_for, session
 
 from users.database import User, save_user, get_user_by_email
 
@@ -52,3 +52,36 @@ def register_post():
 def login():
     return render_template('users/login.html')
 
+
+@users.route('/login', methods=['POST'])
+def login_post():
+    # get data from form
+    email = request.form.get('email')
+    password = request.form.get('password')
+
+    # validate data
+    errors = []
+    if not email:
+        errors.append('Email is required')
+    if not password:
+        errors.append('Password is required')
+
+    # check if user exists
+    user = get_user_by_email(email)
+    if not user:
+        errors.append('Invalid email or password')
+
+    # check if password is correct
+    if user and not user.check_password(password):
+        errors.append('Invalid email or password')
+
+    if errors:
+        return render_template('users/login.html', errors=errors)
+
+    # define session for logged in user
+    session['user_id'] = user.id
+    session['user_email'] = user.email
+    session['user_name'] = user.name
+
+    # redirect to home page
+    return redirect(url_for('index'))

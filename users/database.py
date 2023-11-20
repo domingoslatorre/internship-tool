@@ -22,6 +22,9 @@ class User:
     def from_db_row(row):
         return User(*row)
 
+    def check_password(self, password):
+        return bcrypt.checkpw(password.encode('utf-8'), self.password)
+
 
 def get_connection():
     return sqlite3.connect('database.sqlite')

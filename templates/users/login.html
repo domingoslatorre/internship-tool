@@ -10,6 +10,20 @@
 </head>
 <body>
 <h1>Login</h1>
-
+{% if errors %}
+    <ul>
+        {% for error in errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+<form action="/users/login" method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <label for="email">Email</label>
+    <input type="email" name="email" id="email" value="{{ request.form['email'] }}">
+    <label for="password">Password</label>
+    <input type="password" name="password" id="password">
+    <button type="submit">Register</button>
+</form>
 </body>
 </html>

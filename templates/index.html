@@ -10,6 +10,11 @@
 </head>
 <body>
 <h1>Home Page</h1>
+{% if session['user_name'] %}
+    <h2>Welcome {{ session['user_name'] }}</h2>
+    <a href="/users/logout">Logout</a>
+{% endif %}
+<br>
 <nav>
     <ul>
         <li><a href="/">Home</a></li>
