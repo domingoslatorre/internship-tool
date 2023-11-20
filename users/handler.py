@@ -85,3 +85,10 @@ def login_post():
 
     # redirect to home page
     return redirect(url_for('index'))
+
+
+@users.route('/logout', methods=['GET'])
+def logout():
+    session.clear()
+    return redirect(url_for('index'))
+
