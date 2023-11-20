@@ -18,6 +18,7 @@ Define the environment variables for creating the admin user:
 export ADMIN_NAME=Admin
 export ADMIN_EMAIL=admin@email.com
 export ADMIN_PASSWORD=123123
+export APP_SECRET_KEY=ppAJfhd6BrVROWYj4QRFrJdELhSfvn5j
 ```
 
 Run the application:
