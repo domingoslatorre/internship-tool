@@ -1,6 +1,6 @@
 from flask import Flask, render_template, Blueprint, request, redirect, url_for
 
-from users.database import User, save_user
+from users.database import User, save_user, get_user_by_email
 
 users = Blueprint('users', __name__, url_prefix='/users')
 
@@ -31,11 +31,15 @@ def register_post():
     if password != password_confirmation:
         errors.append('Password confirmation does not match password')
 
+    # check if user already exists
+    if get_user_by_email(email):
+        errors.append('User with this email already exists')
+
     if errors:
         return render_template('users/register.html', errors=errors, name=name, email=email)
 
     # create user
-    user = User(name=name, email=email, password=password)
+    user = User.from_form(name=name, email=email, password=password)
 
     # save user to database
     save_user(user)

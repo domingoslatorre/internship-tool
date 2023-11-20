@@ -5,12 +5,20 @@ from datetime import datetime
 
 @dataclass
 class User:
-    def __init__(self, name, email, password):
-        self.id = None
+    def __init__(self, _id, name, email, password, created_at):
+        self.id = _id
         self.name = name
         self.email = email
         self.password = password
-        self.created_at = datetime.now()
+        self.created_at = created_at
+
+    @staticmethod
+    def from_form(name, email, password):
+        return User(None, name, email, password, datetime.now())
+
+    @staticmethod
+    def from_db_row(row):
+        return User(*row)
 
 
 def get_connection():
@@ -29,3 +37,13 @@ def save_user(user) -> User:
     connection.close()
     return user
 
+
+def get_user_by_email(email) -> User | None:
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute('SELECT * FROM users WHERE email = ?', (email,))
+    result = cursor.fetchone()
+    connection.close()
+    if result is None:
+        return None
+    return User.from_db_row(result)
