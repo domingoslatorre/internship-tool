@@ -73,3 +73,12 @@ def update_user(user: User) -> User:
     connection.commit()
     connection.close()
     return user
+
+
+def find_all_users() -> list[User]:
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute('SELECT * FROM users ORDER BY name')
+    result = cursor.fetchall()
+    connection.close()
+    return [User.from_db_row(row) for row in result]

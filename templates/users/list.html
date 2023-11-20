@@ -3,7 +3,39 @@
 {% block content %}
 
     <div class="row">
-        <h1>{% block title %} Users {% endblock %}</h1>
+        <div class="col-md-12">
+            <h1>{% block title %} Users {% endblock %}</h1>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Created At</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                            <tr>
+                                <td>{{ user.name }}</td>
+                                <td>{{ user.email }}</td>
+                                <td>{{ user.role }}</td>
+                                <td>{{ user.created_at }}</td>
+                                <td>
+                                    {% if user.active %}
+                                        <a href="#" class="btn btn-warning">Deactivate</a>
+                                    {% else %}
+                                        <a href="#" class="btn btn-success">Activate</a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
 {% endblock %}

@@ -1,7 +1,7 @@
 from flask import Flask, render_template, Blueprint, request, redirect, url_for, session, flash
 
 import auth
-from users.database import User, save_user, get_user_by_email, update_user
+from users.database import User, save_user, get_user_by_email, update_user, find_all_users
 
 users = Blueprint('users', __name__, url_prefix='/users')
 
@@ -154,4 +154,6 @@ def change_password():
 @users.route('/', methods=['GET'])
 @auth.minimum_role('ADMIN')
 def users_list():
-    return render_template('users/list.html')
+    all_users = find_all_users()
+    return render_template('users/list.html', users=all_users)
+
