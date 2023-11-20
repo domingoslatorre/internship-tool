@@ -1,7 +1,7 @@
-from flask import Flask, render_template, Blueprint, request, redirect, url_for, session
+from flask import Flask, render_template, Blueprint, request, redirect, url_for, session, flash
 
 import auth
-from users.database import User, save_user, get_user_by_email
+from users.database import User, save_user, get_user_by_email, update_user
 
 users = Blueprint('users', __name__, url_prefix='/users')
 
@@ -103,6 +103,52 @@ def logout():
 @auth.minimum_role('USER')
 def profile():
     return render_template('users/profile.html')
+
+
+@users.route('/password', methods=['POST'])
+@auth.minimum_role('USER')
+def change_password():
+    # get data from form
+    current_password = request.form.get('current_password')
+    new_password = request.form.get('new_password')
+    password_confirmation = request.form.get('password_confirmation')
+
+    # validate data
+    errors = []
+    if not current_password:
+        errors.append('Current Password is required')
+    if not new_password:
+        errors.append('New Password is required')
+    if not password_confirmation:
+        errors.append('Password confirmation is required')
+    if new_password != password_confirmation:
+        errors.append('Password confirmation does not match password')
+
+    # check if user is active
+    user = get_user_by_email(session['user_email'])
+    if user and not user.active:
+        errors.append('User is not active')
+
+    # check if password is correct
+    if user and not user.check_password(current_password):
+        errors.append('Invalid current password')
+
+    # check if new password is different from current password
+    if user and user.check_password(new_password):
+        errors.append('New password must be different from current password')
+
+    if errors:
+        return render_template('users/profile.html', errors=errors)
+
+    # change password
+    user.change_password(new_password)
+
+    # save user to database
+    update_user(user)
+
+    # redirect to profile page
+    flash('Password changed successfully')
+    return redirect(url_for('users.profile'))
 
 
 @users.route('/', methods=['GET'])

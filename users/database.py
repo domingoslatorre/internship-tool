@@ -33,12 +33,15 @@ class User:
     def check_password(self, password):
         return bcrypt.checkpw(password.encode('utf-8'), self.password)
 
+    def change_password(self, password):
+        self.password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+
 
 def get_connection():
     return sqlite3.connect('database.sqlite')
 
 
-def save_user(user) -> User:
+def save_user(user: User) -> User:
     connection = get_connection()
     cursor = connection.cursor()
     cursor.execute('INSERT INTO users (name, email, password, role, active) VALUES (?, ?, ?, ?, ?)',
@@ -51,7 +54,7 @@ def save_user(user) -> User:
     return user
 
 
-def get_user_by_email(email) -> User | None:
+def get_user_by_email(email: str) -> User | None:
     connection = get_connection()
     cursor = connection.cursor()
     cursor.execute('SELECT * FROM users WHERE email = ?', (email,))
@@ -60,3 +63,13 @@ def get_user_by_email(email) -> User | None:
     if result is None:
         return None
     return User.from_db_row(result)
+
+
+def update_user(user: User) -> User:
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute('UPDATE users SET name = ?, email = ?, password = ?, role = ?, active = ? WHERE id = ?',
+                   (user.name, user.email, user.password, user.role, user.active, user.id))
+    connection.commit()
+    connection.close()
+    return user
