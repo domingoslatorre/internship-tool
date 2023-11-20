@@ -65,6 +65,17 @@ def get_user_by_email(email: str) -> User | None:
     return User.from_db_row(result)
 
 
+def get_user_by_id(id: int) -> User | None:
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute('SELECT * FROM users WHERE id = ?', (id,))
+    result = cursor.fetchone()
+    connection.close()
+    if result is None:
+        return None
+    return User.from_db_row(result)
+
+
 def update_user(user: User) -> User:
     connection = get_connection()
     cursor = connection.cursor()

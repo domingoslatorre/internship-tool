@@ -1,7 +1,7 @@
 from flask import Flask, render_template, Blueprint, request, redirect, url_for, session, flash
 
 import auth
-from users.database import User, save_user, get_user_by_email, update_user, find_all_users
+from users.database import User, save_user, get_user_by_email, update_user, find_all_users, get_user_by_id
 
 users = Blueprint('users', __name__, url_prefix='/users')
 
@@ -157,3 +157,22 @@ def users_list():
     all_users = find_all_users()
     return render_template('users/list.html', users=all_users)
 
+
+@users.route('/<int:user_id>/activate', methods=['POST'])
+@auth.minimum_role('ADMIN')
+def activate_user(user_id):
+    user = get_user_by_id(user_id)
+    user.active = True
+    update_user(user)
+    flash(f'User {user.name} activated successfully')
+    return redirect(url_for('users.users_list'))
+
+
+@users.route('/<int:user_id>/deactivate', methods=['POST'])
+@auth.minimum_role('ADMIN')
+def deactivate_user(user_id):
+    user = get_user_by_id(user_id)
+    user.active = False
+    update_user(user)
+    flash(f'User {user.name} deactivated successfully')
+    return redirect(url_for('users.users_list'))

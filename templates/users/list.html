@@ -8,30 +8,37 @@
             <div class="table-responsive">
                 <table class="table">
                     <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Created At</th>
-                            <th>Actions</th>
-                        </tr>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Created At</th>
+                        <th>Actions</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        {% for user in users %}
-                            <tr>
-                                <td>{{ user.name }}</td>
-                                <td>{{ user.email }}</td>
-                                <td>{{ user.role }}</td>
-                                <td>{{ user.created_at }}</td>
-                                <td>
+                    {% for user in users %}
+                        <tr>
+                            <td>{{ user.name }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.role }}</td>
+                            <td>{{ user.created_at }}</td>
+                            <td>
+                                <form method="POST">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                     {% if user.active %}
-                                        <a href="#" class="btn btn-warning">Deactivate</a>
+                                        <button type="submit" class="btn btn-warning"
+                                                formaction="/users/{{ user.id }}/deactivate">Deactivate
+                                        </button>
                                     {% else %}
-                                        <a href="#" class="btn btn-success">Activate</a>
+                                        <button type="submit" class="btn btn-success"
+                                                formaction="/users/{{ user.id }}/activate">Activate
+                                        </button>
                                     {% endif %}
-                                </td>
-                            </tr>
-                        {% endfor %}
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
                     </tbody>
                 </table>
             </div>
