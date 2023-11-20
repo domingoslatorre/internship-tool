@@ -4,5 +4,6 @@ CREATE TABLE IF NOT EXISTS users (
     email TEXT NOT NULL,
     password TEXT NOT NULL,
     role TEXT NOT NULL,
+    active BOOLEAN DEFAULT 1,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );

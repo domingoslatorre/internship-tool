@@ -71,6 +71,10 @@ def login_post():
     if not user:
         errors.append('Invalid email or password')
 
+    # check if user is active
+    if user and not user.active:
+        errors.append('User is not active')
+
     # check if password is correct
     if user and not user.check_password(password):
         errors.append('Invalid email or password')

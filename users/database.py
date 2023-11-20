@@ -18,12 +18,13 @@ class User:
     email: str
     password: bytes
     role: UserRole
+    active: bool
     created_at: datetime
 
     @staticmethod
     def from_form(name, email, password):
         hash_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-        return User(None, name, email, hash_password, UserRole.USER, datetime.now())
+        return User(None, name, email, hash_password, UserRole.USER, False, datetime.now())
 
     @staticmethod
     def from_db_row(row):
@@ -40,8 +41,8 @@ def get_connection():
 def save_user(user) -> User:
     connection = get_connection()
     cursor = connection.cursor()
-    cursor.execute('INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)',
-                   (user.name, user.email, user.password, user.role.value))
+    cursor.execute('INSERT INTO users (name, email, password, role, active) VALUES (?, ?, ?, ?, ?)',
+                   (user.name, user.email, user.password, user.role.value, user.active))
 
     user.id = cursor.lastrowid
 
