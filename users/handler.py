@@ -87,6 +87,7 @@ def login_post():
     session['user_id'] = user.id
     session['user_email'] = user.email
     session['user_name'] = user.name
+    session['user_role'] = user.role
 
     # redirect to home page
     return redirect(url_for('index'))
@@ -99,6 +100,12 @@ def logout():
 
 
 @users.route('/profile', methods=['GET'])
-@auth.login_required
+@auth.minimum_role('USER')
 def profile():
     return render_template('users/profile.html')
+
+
+@users.route('/', methods=['GET'])
+@auth.minimum_role('ADMIN')
+def users_list():
+    return render_template('users/list.html')
