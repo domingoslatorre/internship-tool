@@ -34,7 +34,7 @@ def setup_admin():
         return
 
     logger.info('Creating admin user.')
-    cursor.execute('INSERT INTO users (name, email, password) VALUES (?, ?, ?)',
-                   (name, email, password))
+    cursor.execute('INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)',
+                   (name, email, password, 'ADMIN'))
     connection.commit()
     connection.close()

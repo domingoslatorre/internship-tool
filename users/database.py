@@ -1,22 +1,29 @@
 import sqlite3
 from dataclasses import dataclass
 from datetime import datetime
+from enum import Enum
+
 import bcrypt
+
+
+class UserRole(Enum):
+    ADMIN = 'ADMIN'
+    USER = 'USER'
 
 
 @dataclass
 class User:
-    def __init__(self, _id, name, email, password, created_at):
-        self.id = _id
-        self.name = name
-        self.email = email
-        self.password = password
-        self.created_at = created_at
+    id: int | None
+    name: str
+    email: str
+    password: bytes
+    role: UserRole
+    created_at: datetime
 
     @staticmethod
     def from_form(name, email, password):
         hash_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-        return User(None, name, email, hash_password, datetime.now())
+        return User(None, name, email, hash_password, UserRole.USER, datetime.now())
 
     @staticmethod
     def from_db_row(row):
@@ -33,8 +40,8 @@ def get_connection():
 def save_user(user) -> User:
     connection = get_connection()
     cursor = connection.cursor()
-    cursor.execute('INSERT INTO users (name, email, password) VALUES (?, ?, ?)',
-                   (user.name, user.email, user.password))
+    cursor.execute('INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)',
+                   (user.name, user.email, user.password, user.role.value))
 
     user.id = cursor.lastrowid
 
