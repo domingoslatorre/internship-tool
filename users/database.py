@@ -1,6 +1,7 @@
 import sqlite3
 from dataclasses import dataclass
 from datetime import datetime
+import bcrypt
 
 
 @dataclass
@@ -14,7 +15,8 @@ class User:
 
     @staticmethod
     def from_form(name, email, password):
-        return User(None, name, email, password, datetime.now())
+        hash_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+        return User(None, name, email, hash_password, datetime.now())
 
     @staticmethod
     def from_db_row(row):
