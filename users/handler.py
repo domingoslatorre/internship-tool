@@ -1,5 +1,6 @@
 from flask import Flask, render_template, Blueprint, request, redirect, url_for, session
 
+import auth
 from users.database import User, save_user, get_user_by_email
 
 users = Blueprint('users', __name__, url_prefix='/users')
@@ -96,3 +97,8 @@ def logout():
     session.clear()
     return redirect(url_for('index'))
 
+
+@users.route('/profile', methods=['GET'])
+@auth.login_required
+def profile():
+    return render_template('users/profile.html')
