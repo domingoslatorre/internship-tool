@@ -4,10 +4,12 @@ from flask import Flask, render_template
 from flask_wtf import CSRFProtect
 
 import database
+from students.handler import students
 from users.handler import users
 
 app = Flask(__name__)
 app.register_blueprint(users)
+app.register_blueprint(students)
 app.secret_key = os.environ.get('APP_SECRET_KEY').encode('utf-8')
 csrf = CSRFProtect(app)
 
