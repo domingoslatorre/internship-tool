@@ -2,6 +2,8 @@ import os
 import sqlite3
 import logging
 
+import bcrypt
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -20,7 +22,7 @@ def migrate():
 def setup_admin():
     name = os.environ.get('ADMIN_NAME')
     email = os.environ.get('ADMIN_EMAIL')
-    password = os.environ.get('ADMIN_PASSWORD')
+    password = bcrypt.hashpw(os.environ.get('ADMIN_PASSWORD').encode('utf-8'), bcrypt.gensalt())
 
     connection = sqlite3.connect('database.sqlite')
     cursor = connection.cursor()
